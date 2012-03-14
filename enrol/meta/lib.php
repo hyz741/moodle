@@ -132,6 +132,8 @@ class enrol_meta_plugin extends enrol_plugin {
     public function update_status($instance, $newstatus) {
         global $CFG;
 
+        $context = context_course::instance($instance->courseid);
+        require_capability('enrol/meta:config', $context);
         parent::update_status($instance, $newstatus);
 
         require_once("$CFG->dirroot/enrol/meta/locallib.php");
@@ -147,6 +149,17 @@ class enrol_meta_plugin extends enrol_plugin {
 
         require_once("$CFG->dirroot/enrol/meta/locallib.php");
         enrol_meta_sync();
+    }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function instance_deleteable($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/meta:config', $context);
     }
 }
 
