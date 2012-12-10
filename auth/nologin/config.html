@@ -1,0 +1,33 @@
+<?php
+// set to defaults if undefined
+if (!isset($config->enable_specific_message)) {
+    $config->enable_specific_message = false;
+}
+
+if( !isset($config->specific_message_text)){
+    $config->specific_message_text = get_string('invalidlogin');
+}
+?>
+<table cellspacing="0" cellpadding="5" border="0">
+<tr>
+    <td align="right" class="form-label">
+        <label for=checkbox_enable_specific_message"><?php print_string('auth_nologin_specificmessage_select_key', 'auth_nologin') ?></label>
+        <br/><span class="form-shortname">enable_specific_message</span>
+    </td>
+    <td><?php
+        global $OUTPUT;
+        echo html_writer::checkbox('enable_specific_message', 1, $config->enable_specific_message,'',array('id' => 'checkbox_enable_specific_message'));
+        ?></td>
+    <td><?php print_string('auth_nologin_specificmessage_description', 'auth_nologin') ?></td>
+</tr>
+<tr>
+    <td align="right" class="form-label">
+        <label for="specific_message_text"><?php print_string('auth_nologin_specificmessage_text_key', 'auth_nologin') ?></label>
+        <br/><span class="form-shortname">specific_message_text</span>
+    </td>
+    <td>
+        <input id="specific_message_text" name="specific_message_text" type="text" size="50" maxlength="200" value="<?php echo $config->specific_message_text ?>" />
+    </td>
+    <td><?php print_string('auth_nologin_specificmessage_text_description', 'auth_nologin') ?></td>
+</tr>
+</table>

@@ -72,6 +72,15 @@ define('GRADE_AGGREGATE_EXTRACREDIT_MEAN', 12);
  */
 define('GRADE_AGGREGATE_SUM', 13);
 
+/**
+ * GRADE_AGGREGATE_MEAN_UFSC - Use the mean of grades in the category for grade aggregation.
+ */
+define('GRADE_AGGREGATE_MEAN_UFSC', 30);
+/**
+ * GRADE_AGGREGATE_WEIGHTED_MEAN_UFSC - Use the weighted mean of grades in the category for grade aggregation.
+ */
+define('GRADE_AGGREGATE_WEIGHTED_MEAN_UFSC', 31);
+
 // Grade types
 
 /**

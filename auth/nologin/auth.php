@@ -77,6 +77,32 @@ class auth_plugin_nologin extends auth_plugin_base {
         return false;
     }
 
+    /**
+     * Prints a form for configuring this authentication plugin.
+     *
+     * This function is called from admin/auth.php, and outputs a full page with
+     * a form for configuring this plugin.
+     */
+    function config_form($config, $err, $user_fields) {
+        include "config.html";
+    }
+
+    /**
+     * Processes and stores configuration data for this authentication plugin.
+     */
+    function process_config($config) {
+        // set to defaults if undefined
+        if (!isset($config->enable_specific_message)) {
+            $config->enable_specific_message = false;
+        }
+        if (!isset($config->specific_message_text)) {
+            $config->specific_message_text = get_string('invalidlogin');
+        }
+
+        // save settings
+        set_config('enable_specific_message',   $config->enable_specific_message,   'auth/nologin');
+        set_config('specific_message_text',     $config->specific_message_text,     'auth/nologin');
+
+        return true;
+    }
 }
-
-

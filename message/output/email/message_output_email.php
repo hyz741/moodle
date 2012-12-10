@@ -83,15 +83,18 @@ class message_output_email extends message_output {
             return null;
         }
 
-        $inputattributes = array('size'=>'30', 'name'=>'email_email', 'value'=>$preferences->email_email);
-        $string = get_string('email','message_email') . ': ' . html_writer::empty_tag('input', $inputattributes);
+        $string = '';
+        if (has_capability('moodle/user:editownmessageemail', get_context_instance(CONTEXT_SYSTEM))) {
+            $inputattributes = array('size'=>'30', 'name'=>'email_email', 'value'=>$preferences->email_email);
+            $string = get_string('email','message_email') . ': ' . html_writer::empty_tag('input', $inputattributes);
 
-        if (empty($preferences->email_email) && !empty($preferences->userdefaultemail)) {
-            $string .= get_string('ifemailleftempty', 'message_email', $preferences->userdefaultemail);
-        }
+            if (empty($preferences->email_email) && !empty($preferences->userdefaultemail)) {
+                $string .= get_string('ifemailleftempty', 'message_email', $preferences->userdefaultemail);
+            }
 
-        if (!empty($preferences->email_email) && !validate_email($preferences->email_email)) {
-            $string .= $OUTPUT->container(get_string('invalidemail'), 'error');
+            if (!empty($preferences->email_email) && !validate_email($preferences->email_email)) {
+                $string .= $OUTPUT->container(get_string('invalidemail'), 'error');
+            }
         }
 
         return $string;

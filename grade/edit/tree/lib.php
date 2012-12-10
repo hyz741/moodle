@@ -656,7 +656,9 @@ class grade_edit_tree_column_aggregation extends grade_edit_tree_column_category
         }
 
         $options = array(GRADE_AGGREGATE_MEAN             => get_string('aggregatemean', 'grades'),
+                         GRADE_AGGREGATE_MEAN_UFSC        => get_string('aggregatemeanufsc', 'grades'),
                          GRADE_AGGREGATE_WEIGHTED_MEAN    => get_string('aggregateweightedmean', 'grades'),
+                         GRADE_AGGREGATE_WEIGHTED_MEAN_UFSC => get_string('aggregateweightedmeanufsc', 'grades'),
                          GRADE_AGGREGATE_WEIGHTED_MEAN2   => get_string('aggregateweightedmean2', 'grades'),
                          GRADE_AGGREGATE_EXTRACREDIT_MEAN => get_string('aggregateextracreditmean', 'grades'),
                          GRADE_AGGREGATE_MEDIAN           => get_string('aggregatemedian', 'grades'),

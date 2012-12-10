@@ -1349,24 +1349,23 @@ class restore_course_structure_step extends restore_structure_step {
 
         $data = (object)$data;
 
-        $fullname  = $this->get_setting_value('course_fullname');
-        $shortname = $this->get_setting_value('course_shortname');
-        $startdate = $this->get_setting_value('course_startdate');
-
-        // Calculate final course names, to avoid dupes
-        list($fullname, $shortname) = restore_dbops::calculate_course_names($this->get_courseid(), $fullname, $shortname);
 
         // Need to change some fields before updating the course record
         $data->id = $this->get_courseid();
-        $data->fullname = $fullname;
-        $data->shortname= $shortname;
 
-        $context = context::instance_by_id($this->task->get_contextid());
-        if (has_capability('moodle/course:changeidnumber', $context, $this->task->get_userid())) {
-            $data->idnumber = '';
-        } else {
-            unset($data->idnumber);
-        }
+        unset($data->fullname);
+        unset($data->shortname);
+        unset($data->idnumber);
+        unset($data->category);
+        unset($data->startdate);
+        unset($data->lang);
+        unset($data->theme);
+
+        unset($data->summary);
+        unset($data->summaryformat);
+        unset($data->visible);
+        unset($data->timecreated);
+        unset($data->timemodified);
 
         // Any empty value for course->hiddensections will lead to 0 (default, show collapsed).
         // It has been reported that some old 1.9 courses may have it null leading to DB error. MDL-31532
@@ -1378,7 +1377,6 @@ class restore_course_structure_step extends restore_structure_step {
         // then we will need to process restricted modules after execution.
         $this->legacyrestrictmodules = !empty($data->restrictmodules);
 
-        $data->startdate= $this->apply_date_offset($data->startdate);
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
         }
@@ -1386,15 +1384,6 @@ class restore_course_structure_step extends restore_structure_step {
             $data->enablecompletion = 0;
             $data->completionstartonenrol = 0;
             $data->completionnotify = 0;
-        }
-        $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
-        if (!array_key_exists($data->lang, $languages)) {
-            $data->lang = '';
-        }
-
-        $themes = get_list_of_themes(); // Get themes for quick search later
-        if (!array_key_exists($data->theme, $themes) || empty($CFG->allowcoursethemes)) {
-            $data->theme = '';
         }
 
         // Course record ready, update it

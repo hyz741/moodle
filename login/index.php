@@ -250,7 +250,15 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
     } else {
         if (empty($errormsg)) {
-            $errormsg = get_string("invalidlogin");
+            // check if user is set as 'nologin' and if a specific message is desired
+            $user_auth = $DB->get_field('user', 'auth', array('username' => $frm->username), IGNORE_MISSING);
+            $nologin_cfgs = get_config('auth/nologin');
+
+            if (!empty($user_auth) && $user_auth == 'nologin' && !empty($nologin_cfgs->enable_specific_message)) {
+                $errormsg = $nologin_cfgs->specific_message_text;
+            } else {
+                $errormsg = get_string("invalidlogin");
+            }
             $errorcode = 3;
         }
     }

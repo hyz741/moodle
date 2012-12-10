@@ -1146,8 +1146,10 @@ class grade_structure {
                     if ($category = $element['object']->get_item_category()) {
                         switch ($category->aggregation) {
                             case GRADE_AGGREGATE_MEAN:
+                            case GRADE_AGGREGATE_MEAN_UFSC:
                             case GRADE_AGGREGATE_MEDIAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN:
+                            case GRADE_AGGREGATE_WEIGHTED_MEAN_UFSC:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
                                 $stragg = get_string('aggregation', 'grades');

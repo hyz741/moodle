@@ -1264,6 +1264,17 @@ $capabilities = array(
          )
      ),
 
+     'moodle/user:editownmessageemail' => array(
+
+         'captype' => 'write',
+         'contextlevel' => CONTEXT_SYSTEM,
+         'archetypes' => array(
+             'guest' => CAP_PROHIBIT,
+             'user' => CAP_ALLOW,
+             'manager' => CAP_ALLOW
+         )
+     ),
+
      'moodle/user:editownmessageprofile' => array(
 
          'captype' => 'write',

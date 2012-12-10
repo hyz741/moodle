@@ -113,7 +113,7 @@ class EvalMath {
         'average'=>array(-1), 'max'=>array(-1),  'min'=>array(-1),
         'mod'=>array(2),      'pi'=>array(0),    'power'=>array(2),
         'round'=>array(1, 2), 'sum'=>array(-1), 'rand_int'=>array(2),
-        'rand_float'=>array(0));
+        'rand_float'=>array(0), 'roundufsc'=>array(1));
 
     var $allowimplicitmultiplication;
 
@@ -515,6 +515,12 @@ class EvalMathFuncs {
 
     static function round($val, $precision = 0) {
         return round($val, $precision);
+    }
+
+    // Recebe um valor de 0-10 e retorna um valor na mesma escala arrendondado segundo os criterios da UFSC
+    static function roundufsc($val) {
+        $nota = (int)(($val + 0.25) * 10);
+        return ($nota - ($nota % 5)) / 10;
     }
 
     static function sum() {

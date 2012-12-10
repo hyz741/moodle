@@ -186,9 +186,26 @@ $PAGE->verify_https_required();
 
 
 /// DISPLAY FORM
+$instructions =
+'<p>O procedimento de obtenção de senha é automático, não dependendo da intervenção do administrador.
+Ele serve tanto para obter sua senha inicial (primeiro acesso) como para obter uma nova senha, caso você a tenha esquecido.</p>
+
+<p>O procedimento é composto de duas etapas:</p>
+
+<ol>
+<li>Após preencher seu usuário abaixo, o Moodle encaminhará para seu email um pedido de confirmação de forma a garantir que foi você mesmo que fez a solicitação;</li>
+<li>Confirmada a solicitação, o Moodle lhe encaminhará uma segunda mensagem com a nova senha.</li>
+</ol>
+
+<p>Insira abaixo seu usuário:</p>
+
+<ul>
+<li>Estudantes - número de matrícula (ex: 08299012, 200501234, 912345, conforme o caso);</li>
+<li>Professores, técnico-administrativos, tutores, etc - CPF (ex: 00123456789)</li>
+</ul>';
 
 echo $OUTPUT->header();
-echo $OUTPUT->box(get_string('passwordforgotteninstructions2'), 'generalbox boxwidthnormal boxaligncenter');
+echo $OUTPUT->box($instructions, 'generalbox boxwidthnormal boxaligncenter');
 $mform->display();
 
 echo $OUTPUT->footer();

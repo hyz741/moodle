@@ -25,3 +25,7 @@
 
 $string['auth_nologindescription'] = 'Auxiliary plugin that prevents user to login into system and also discards any mail sent to the user. Can be used to <em>suspend</em> user accounts.';
 $string['pluginname'] = 'No login';
+$string['auth_nologin_specificmessage_select_key'] = 'Enable specific "invalid login" message';
+$string['auth_nologin_specificmessage_description'] = 'Presents a specific message to users marked as "nologin" when they try to authenticate.';
+$string['auth_nologin_specificmessage_text_key'] = 'Message to be presented';
+$string['auth_nologin_specificmessage_text_description'] = 'Only considered when the above option is selected.';

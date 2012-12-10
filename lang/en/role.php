@@ -363,6 +363,7 @@ $string['user:changeownpassword'] = 'Change own password';
 $string['user:create'] = 'Create users';
 $string['user:delete'] = 'Delete users';
 $string['user:editmessageprofile'] = 'Edit user messaging profile';
+$string['user:editownmessageemail'] = 'Edit own user messaging notification email address';
 $string['user:editownmessageprofile'] = 'Edit own user messaging profile';
 $string['user:editownprofile'] = 'Edit own user profile';
 $string['user:editprofile'] = 'Edit user profile';

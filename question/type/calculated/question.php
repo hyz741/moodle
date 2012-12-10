@@ -449,7 +449,7 @@ class qtype_calculated_variable_substituter {
                     break;
 
                     // Functions that take one or two arguments
-                case 'log': case 'round':
+                case 'log': case 'round': case 'roundufsc':
                     if (!empty($regs[5]) || empty($regs[3])) {
                         return get_string('functiontakesoneortwoargs', 'qtype_calculated',
                                 $regs[2]);
