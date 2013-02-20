@@ -465,6 +465,8 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
  * @param int $draftitemid the draft area item id.
  * @return array with the following entries:
  *      'filecount' => number of files in the draft area.
+ *      'filesize' => total size of the area.
+ *      'filesize_without_references' => total size of the area excluding file references.
  * (more information will be added as needed).
  */
 function file_get_draft_area_info($draftitemid) {
@@ -475,12 +477,17 @@ function file_get_draft_area_info($draftitemid) {
 
     $results = array();
 
-    // The number of files
+    // The number of files.
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', false);
     $results['filecount'] = count($draftfiles);
     $results['filesize'] = 0;
+    $results['filesize_without_references'] = 0;
     foreach ($draftfiles as $file) {
-        $results['filesize'] += $file->get_filesize();
+        $filesize = $file->get_filesize();
+        $results['filesize'] += $filesize;
+        if (!$file->is_external_file()) {
+            $results['filesize_without_references'] += $filesize;
+        }
     }
 
     return $results;
@@ -494,13 +501,18 @@ function file_get_draft_area_info($draftitemid) {
  * @param int $draftitemid the draft area item id.
  * @param int $areamaxbytes the maximum size allowed in this draft area.
  * @param int $newfilesize the size that would be added to the current area.
+ * @param bool $includereferences true to include the size of the references in the area size.
  * @return bool true if the area will/has exceeded its limit.
  * @since 2.4
  */
-function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0) {
+function file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $newfilesize = 0, $includereferences = false) {
     if ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED) {
         $draftinfo = file_get_draft_area_info($draftitemid);
-        if ($draftinfo['filesize'] + $newfilesize > $areamaxbytes) {
+        $areasize = $draftinfo['filesize_without_references'];
+        if ($includereferences) {
+            $areasize = $draftinfo['filesize'];
+        }
+        if ($areasize + $newfilesize > $areamaxbytes) {
             return true;
         }
     }
@@ -1461,6 +1473,7 @@ function &get_mimetypes_array() {
         'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf'),
         'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf'),
         'java' => array ('type'=>'text/plain', 'icon'=>'sourcecode'),
+        'jar'  => array ('type'=>'application/java-archive', 'icon' => 'archive'),
         'jcb'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'jcl'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'jcw'  => array ('type'=>'text/xml', 'icon'=>'markup'),
@@ -2286,7 +2299,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             $options = new stdClass();
             $options->newlines = false;
             $options->noclean = true;
-            $text = htmlentities($pathisstring ? $path : implode('', file($path)));
+            $text = htmlentities($pathisstring ? $path : implode('', file($path)), ENT_QUOTES, 'UTF-8');
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
 
             readstring_accel($output, $mimetype, false);
@@ -4264,7 +4277,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 send_file_not_found();
             }
 
-            $bprecord = $DB->get_record('block_positions', array('blockinstanceid' => $context->instanceid), 'visible');
+            $bprecord = $DB->get_record('block_positions', array('contextid' => $context->id, 'blockinstanceid' => $context->instanceid));
             // User can't access file, if block is hidden or doesn't have block:view capability
             if (($bprecord && !$bprecord->visible) || !has_capability('moodle/block:view', $context)) {
                  send_file_not_found();

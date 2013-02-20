@@ -134,16 +134,22 @@ class assign_grading_table extends table_sql implements renderable {
         $where = 'u.id ' . $userwhere;
         $params = array_merge($params, $userparams);
 
-        if ($filter == ASSIGN_FILTER_SUBMITTED) {
-            $where .= ' AND s.timecreated > 0 ';
-        }
-        if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
-            $where .= ' AND (s.timemodified > g.timemodified OR (s.timemodified IS NOT NULL AND g.timemodified IS NULL))';
-        }
-        if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
-            $userfilter = (int) array_pop(explode('=', $filter));
-            $where .= ' AND (u.id = :userid)';
-            $params['userid'] = $userfilter;
+        // The filters do not make sense when there are no submissions, so do not apply them.
+        if ($this->assignment->is_any_submission_plugin_enabled()) {
+            if ($filter == ASSIGN_FILTER_SUBMITTED) {
+                $where .= ' AND s.timecreated > 0 ';
+            }
+            if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
+                $where .= ' AND (s.timemodified IS NOT NULL AND
+                                 s.status = :submitted AND
+                                 (s.timemodified > g.timemodified OR g.timemodified IS NULL))';
+                $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+            }
+            if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
+                $userfilter = (int) array_pop(explode('=', $filter));
+                $where .= ' AND (u.id = :userid)';
+                $params['userid'] = $userfilter;
+            }
         }
         $this->set_sql($fields, $from, $where, $params);
 
@@ -396,7 +402,7 @@ class assign_grading_table extends table_sql implements renderable {
                 if ($grade == -1 || $grade === null) {
                     return '';
                 }
-                return format_float($grade);
+                return format_float($grade, 2);
             } else {
                 // This is a custom scale.
                 $scale = $this->assignment->display_grade($grade, false);
@@ -628,6 +634,10 @@ class assign_grading_table extends table_sql implements renderable {
         $o = '-';
 
         if ($row->timemarked && $row->grade !== NULL && $row->grade >= 0) {
+            $o = userdate($row->timemarked);
+        }
+        if ($row->timemarked && $this->is_downloading()) {
+            // Force it for downloads as it affects import.
             $o = userdate($row->timemarked);
         }
 

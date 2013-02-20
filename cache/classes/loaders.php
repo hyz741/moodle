@@ -314,7 +314,10 @@ class cache implements cache_loader {
                 cache_helper::record_cache_miss($this->storetype, $this->definition->get_id());
             }
             if ($this->loader !== false) {
-                $result = $this->loader->get($parsedkey);
+                // We must pass the original (unparsed) key to the next loader in the chain.
+                // The next loader will parse the key as it sees fit. It may be parsed differently
+                // depending upon the capabilities of the store associated with the loader.
+                $result = $this->loader->get($key);
             } else if ($this->datasource !== false) {
                 $result = $this->datasource->load_for_cache($key);
             }
@@ -1093,6 +1096,10 @@ class cache_application extends cache implements cache_loader_with_locking {
             $todelete = array();
             // Iterate the returned data for the events.
             foreach ($events as $event => $keys) {
+                if ($keys === false) {
+                    // There are no keys.
+                    continue;
+                }
                 // Look at each key and check the timestamp.
                 foreach ($keys as $key => $timestamp) {
                     // If the timestamp of the event is more than or equal to the last invalidation (happened between the last

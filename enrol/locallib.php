@@ -840,7 +840,9 @@ class course_enrolment_manager {
                         break;
                 }
             }
-            $users[$userrole->id]['roles'] = array();
+            if (!isset($users[$userrole->id]['roles'])) {
+                $users[$userrole->id]['roles'] = array();
+            }
             $users[$userrole->id]['roles'][$userrole->roleid] = array(
                 'text' => $roletext,
                 'unchangeable' => !$changeable
@@ -926,7 +928,7 @@ class course_enrolment_manager {
                 $details['enrolments'][$ue->id] = array(
                     'text' => $ue->enrolmentinstancename,
                     'period' => $period,
-                    'dimmed' =>  ($periodoutside || $ue->status != ENROL_USER_ACTIVE),
+                    'dimmed' =>  ($periodoutside or $ue->status != ENROL_USER_ACTIVE or $ue->enrolmentinstance->status != ENROL_INSTANCE_ENABLED),
                     'actions' => $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue)
                 );
             }

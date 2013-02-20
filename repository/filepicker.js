@@ -1281,7 +1281,7 @@ M.core_filepicker.init = function(Y, options) {
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
                 headerContent: M.str.repository.filepicker,
-                zIndex       : 5000,
+                zIndex       : 7500,
                 centered     : true,
                 modal        : true,
                 visible      : false,
@@ -1302,7 +1302,7 @@ M.core_filepicker.init = function(Y, options) {
                 set('id', 'filepicker-select-'+client_id);
             this.selectui = new Y.Panel({
                 srcNode      : this.selectnode,
-                zIndex       : 6000,
+                zIndex       : 7600,
                 centered     : true,
                 modal        : true,
                 close        : true,
@@ -1320,8 +1320,10 @@ M.core_filepicker.init = function(Y, options) {
                 this.pathbar.removeChild(this.pathnode);
             }
             // assign callbacks for view mode switch buttons
-            this.fpnode.all('.fp-vb-icons,.fp-vb-tree,.fp-vb-details').
-                on('click', this.viewbar_clicked, this);
+            this.fpnode.one('.fp-vb-icons').on('click', this.viewbar_clicked, this);
+            this.fpnode.one('.fp-vb-tree').on('click', this.viewbar_clicked, this);
+            this.fpnode.one('.fp-vb-details').on('click', this.viewbar_clicked, this);
+
             // assign callbacks for toolbar links
             this.setup_toolbar();
             this.setup_select_file();

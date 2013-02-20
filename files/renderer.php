@@ -188,7 +188,7 @@ class core_files_renderer extends plugin_renderer_base {
         $strdroptoupload = get_string('droptoupload', 'moodle');
         $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
         $restrictions = $this->fm_print_restrictions($fm);
-        $strdndenabled = get_string('dndenabled_insentence', 'moodle').$OUTPUT->help_icon('dndenabled');
+        $strdndnotsupported = get_string('dndnotsupported_insentence', 'moodle').$OUTPUT->help_icon('dndnotsupported');
         $strdndenabledinbox = get_string('dndenabled_inbox', 'moodle');
         $loading = get_string('loading', 'repository');
 
@@ -196,7 +196,7 @@ class core_files_renderer extends plugin_renderer_base {
 <div id="filemanager-'.$client_id.'" class="filemanager fm-loading">
     <div class="fp-restrictions">
         '.$restrictions.'
-        <span class="dndupload-message"> - '.$strdndenabled.' </span>
+        <span class="dnduploadnotsupported-message"> - '.$strdndnotsupported.' </span>
     </div>
     <div class="fp-navbar">
         <div class="filemanager-toolbar">
@@ -304,7 +304,10 @@ class core_files_renderer extends plugin_renderer_base {
     private function fm_js_template_mkdir() {
         $rv = '
 <div class="filemanager fp-mkdir-dlg">
-    <div class="fp-mkdir-dlg-text">'.get_string('newfoldername','repository').'<br/><input type="text" /></div>
+    <div class="fp-mkdir-dlg-text">
+        <label>' . get_string('newfoldername', 'repository') . '</label><br/>
+        <input type="text" />
+    </div>
     <button class="{!}fp-dlg-butcreate">'.get_string('makeafolder').'</button>
     <button class="{!}fp-dlg-butcancel">'.get_string('cancel').'</button>
 </div>';
