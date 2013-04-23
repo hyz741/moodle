@@ -1674,13 +1674,15 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                                 'type' => 'hidden', 'name' => 'completionstate',
                                 'value' => $newstate));
                         echo html_writer::empty_tag('input', array(
-                                'type' => 'image', 'src' => $imgsrc, 'alt' => $imgalt, 'title' => $imgtitle));
+                                'type' => 'image', 'src' => $imgsrc, 'alt' => $imgalt, 'title' => $imgtitle,
+                                'aria-live' => 'polite'));
                         echo html_writer::end_tag('div');
                         echo html_writer::end_tag('form');
                     } else {
-                        // In auto mode, or when editing, the icon is just an image
-                        echo "<span class='autocompletion'>";
-                        echo "<img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
+                        // In auto mode, or when editing, the icon is just an image.
+                        echo html_writer::tag('span', html_writer::empty_tag('img', array(
+                                'src' => $imgsrc, 'alt' => $imgalt, 'title' => $imgalt)),
+                                array('class' => 'autocompletion'));
                     }
                 }
             }
@@ -2679,14 +2681,14 @@ function print_course_search($value="", $return=false, $format="plain") {
         $output  = '<form id="'.$id.'" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<label for="shortsearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="shortsearchbox" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value).'" />';
+        $output .= '<input type="text" id="shortsearchbox" size="12" name="search" value="'.s($value).'" />';
         $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     } else if ($format == 'navbar') {
         $output  = '<form id="coursesearchnavbar" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<fieldset class="coursesearchbox invisiblefieldset">';
         $output .= '<label for="navsearchbox">'.$strsearchcourses.': </label>';
-        $output .= '<input type="text" id="navsearchbox" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value).'" />';
+        $output .= '<input type="text" id="navsearchbox" size="20" name="search" value="'.s($value).'" />';
         $output .= '<input type="submit" value="'.get_string('go').'" />';
         $output .= '</fieldset></form>';
     }
@@ -3163,17 +3165,19 @@ function moveto_module($mod, $section, $beforemod=NULL) {
     }
 
     // if moving to a hidden section then hide module
-    if (!$section->visible && $mod->visible) {
-        // Set this in the object because it is sent as a response to ajax calls.
-        $mod->visible = 0;
-        set_coursemodule_visible($mod->id, 0);
-        // Set visibleold to 1 so module will be visible when section is made visible.
-        $DB->set_field('course_modules', 'visibleold', 1, array('id' => $mod->id));
-    }
-    if ($section->visible && !$mod->visible) {
-        set_coursemodule_visible($mod->id, $mod->visibleold);
-        // Set this in the object because it is sent as a response to ajax calls.
-        $mod->visible = $mod->visibleold;
+    if ($mod->section != $section->id) {
+        if (!$section->visible && $mod->visible) {
+            // Set this in the object because it is sent as a response to ajax calls.
+            $mod->visible = 0;
+            set_coursemodule_visible($mod->id, 0);
+            // Set visibleold to 1 so module will be visible when section is made visible.
+            $DB->set_field('course_modules', 'visibleold', 1, array('id' => $mod->id));
+        }
+        if ($section->visible && !$mod->visible) {
+            set_coursemodule_visible($mod->id, $mod->visibleold);
+            // Set this in the object because it is sent as a response to ajax calls.
+            $mod->visible = $mod->visibleold;
+        }
     }
 
 /// Add the module into the new section
@@ -4411,16 +4415,18 @@ class course_request {
  * @param stdClass $currentcontext Current context of block
  */
 function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    // if above course context ,display all course fomats
-    list($currentcontext, $course, $cm) = get_context_info_array($currentcontext->id);
-    if ($course->id == SITEID) {
-        return array('*'=>get_string('page-x', 'pagetype'));
-    } else {
-        return array('*'=>get_string('page-x', 'pagetype'),
-            'course-*'=>get_string('page-course-x', 'pagetype'),
-            'course-view-*'=>get_string('page-course-view-x', 'pagetype')
-        );
+    // $currentcontext could be null, get_context_info_array() will throw an error if this is the case.
+    if (isset($currentcontext)) {
+        // if above course context ,display all course fomats
+        list($currentcontext, $course, $cm) = get_context_info_array($currentcontext->id);
+        if ($course->id == SITEID) {
+            return array('*'=>get_string('page-x', 'pagetype'));
+        }
     }
+    return array('*'=>get_string('page-x', 'pagetype'),
+        'course-*'=>get_string('page-course-x', 'pagetype'),
+        'course-view-*'=>get_string('page-course-view-x', 'pagetype')
+    );
 }
 
 /**
