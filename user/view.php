@@ -336,6 +336,16 @@ if (!isset($hiddenfields['suspended'])) {
         echo html_writer::tag('dd', get_string('suspended', 'auth'));
     }
 }
+
+if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
+    if ($user->lastip) {
+        $ipstring = '<a href ="'.$CFG->wwwroot.'/iplookup/index.php?ip='.$user->lastip.'&user='.$USER->id.'">'.$user->lastip.'</a>';
+    } else {
+        $ipstring = get_string("none");
+    }
+    echo html_writer::tag('dt', get_string('lastip'));
+    echo html_writer::tag('dd', $ipstring);
+}
 echo html_writer::end_tag('dl');
 echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 // Print messaging link if allowed

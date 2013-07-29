@@ -910,6 +910,7 @@ $string['language'] = 'Language';
 $string['languagegood'] = 'This language pack is up-to-date! :-)';
 $string['lastaccess'] = 'Last access';
 $string['lastedited'] = 'Last edited';
+$string['lastip'] = 'Last IP address';
 $string['lastlogin'] = 'Last login';
 $string['lastmodified'] = 'Last modified';
 $string['lastname'] = 'Surname';

@@ -391,6 +391,16 @@ if (!isset($hiddenfields['lastaccess'])) {
     echo html_writer::tag('dd', $datestring);
 }
 
+if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
+    if ($user->lastip) {
+        $ipstring = '<a href ="'.$CFG->wwwroot.'/iplookup/index.php?ip='.$user->lastip.'&user='.$USER->id.'">'.$user->lastip.'</a>';
+    } else {
+        $ipstring = get_string("none");
+    }
+    echo html_writer::tag('dt', get_string('lastip'));
+    echo html_writer::tag('dd', $ipstring);
+}
+
 /// Printing tagged interests
 if (!empty($CFG->usetags)) {
     if ($interests = tag_get_tags_csv('user', $user->id) ) {
